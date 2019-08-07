@@ -1,5 +1,6 @@
 package com.franco.group;
 
+import com.franco.common.Tuple;
 import com.franco.domain.Matchable;
 import com.franco.domain.Matcher;
 import com.franco.event.AddEvent;
@@ -89,7 +90,7 @@ public class AbstractMatchGroup implements MatchGroup {
     }
 
     @Override
-    public void notifyMatcher(List<Matchable> matchers) {
+    public void notifyMatcher(List<Tuple<Matchable, Matchable>> matchers) {
 
     }
 

@@ -1,5 +1,6 @@
 package com.franco.group;
 
+import com.franco.common.Tuple;
 import com.franco.domain.Matchable;
 import com.franco.listener.MatchListener;
 
@@ -28,7 +29,7 @@ public interface MatchGroup {
     /**
      * 通知匹配对象
      */
-    void notifyMatcher(List<Matchable> matchers);
+    void notifyMatcher(List<Tuple<Matchable, Matchable>> matchers);
 
     /**
      * 处理添加事件
