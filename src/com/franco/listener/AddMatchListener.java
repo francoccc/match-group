@@ -5,7 +5,7 @@ import com.franco.group.MatchGroup;
 
 import java.util.EventObject;
 
-public class AddMatchLIstener implements MatchListener {
+public class AddMatchListener implements MatchListener {
 
     @Override
     public void handleEvent(EventObject event) {

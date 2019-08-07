@@ -61,17 +61,19 @@ public class AbstractMatchGroup implements MatchGroup {
 
                 @Override
                 public void run() {
+                    System.out.println("开始监控线程");
                     while(true) {
                         try {
                             match();
                             Thread.currentThread().sleep(500);
                         } catch (InterruptedException e) {
-                            System.out.println("结束监控线程");
+                            System.out.println("准备结束监控线程");
+                            break;
                         }
                     }
                 }
             });
-            System.out.println("开始监控线程");
+            System.out.println("准备开始监控线程");
             matchThread.start();
         }
     }
@@ -82,6 +84,7 @@ public class AbstractMatchGroup implements MatchGroup {
             matchThread.interrupt();
         }
         matchThread = null;
+        System.out.println("监控线程被移除");
     }
 
     @Override
