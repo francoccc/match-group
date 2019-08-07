@@ -34,4 +34,6 @@ public interface MatchGroup {
      * 处理添加事件
      */
     void onHandleAddEvent();
+
+    void onHandleIdleEvent();
 }

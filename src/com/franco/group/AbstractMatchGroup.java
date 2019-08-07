@@ -4,6 +4,7 @@ import com.franco.domain.Matchable;
 import com.franco.domain.Matcher;
 import com.franco.event.AddEvent;
 import com.franco.listener.MatchListener;
+import com.franco.strategy.MatchStrategy;
 
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -13,12 +14,17 @@ public class AbstractMatchGroup implements MatchGroup {
 
     protected List<Matchable> waitingGroup;
     protected Matcher matcher;
+    protected MatchStrategy matchStrategy;
     private Thread matchThread;
     private List<MatchListener> listeners;
 
-    public AbstractMatchGroup(List waitingGroup, Matcher matcher) {
+    public AbstractMatchGroup(List waitingGroup,
+                              Matcher matcher,
+                              MatchStrategy matchStrategy) {
         this.waitingGroup = waitingGroup;
         this.matcher = matcher;
+        this.matchStrategy = matchStrategy;
+        matchStrategy.setMatcher(matcher);
         this.listeners = new ArrayList<>();
     }
 
@@ -59,7 +65,7 @@ public class AbstractMatchGroup implements MatchGroup {
                             match();
                             Thread.currentThread().sleep(500);
                         } catch (InterruptedException e) {
-
+                            System.out.println("结束监控线程");
                         }
                     }
                 }
@@ -70,6 +76,14 @@ public class AbstractMatchGroup implements MatchGroup {
     }
 
     @Override
+    public void onHandleIdleEvent() {
+        if(matchThread != null && !matchThread.isInterrupted()) {
+            matchThread.interrupt();
+        }
+        matchThread = null;
+    }
+
+    @Override
     public int match() {
         return 0;
     }
@@ -77,5 +91,13 @@ public class AbstractMatchGroup implements MatchGroup {
     @Override
     public void notifyMatcher(List<Matchable> matchers) {
 
+    }
+
+    public MatchStrategy getMatchStrategy() {
+        return matchStrategy;
+    }
+
+    public void setMatchStrategy(MatchStrategy matchStrategy) {
+        this.matchStrategy = matchStrategy;
     }
 }

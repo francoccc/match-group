@@ -6,27 +6,34 @@ import java.util.List;
 import com.franco.domain.MatchPlayer;
 import com.franco.domain.Matchable;
 import com.franco.domain.Matcher;
+import com.franco.event.IdleEvent;
+import com.franco.strategy.MatchStrategy;
 
 public class TianTiMatchGroup extends AbstractMatchGroup {
 
-    public TianTiMatchGroup(List waitingQueue, Matcher<MatchPlayer> matcher) {
-        super(waitingQueue, matcher);
+    public TianTiMatchGroup(List waitingQueue,
+                            Matcher<MatchPlayer> matcher,
+                            MatchStrategy matchStrategy) {
+        super(waitingQueue, matcher, matchStrategy);
     }
 
     @Override
     public int match() {
         List<Matchable> candidates = new ArrayList<>();
         synchronized (waitingGroup) {
-            for(int i = 0; i < waitingGroup.size(); i++) {
-                if(matcher.match(waitingGroup.get(0), waitingGroup.get(1))) {
-                    candidates.add(waitingGroup.get(0));
-                    candidates.add(waitingGroup.get(1));
+            try {
+                matchStrategy.doMatch(waitingGroup, candidates);
+            } catch (Exception e) {
+                System.out.println("进行匹配产生异常！");
+            } finally {
+                notifyMatcher(candidates);
+                for(Matchable matchable : candidates) {
+                    waitingGroup.remove(matchable);
                 }
             }
-            for(Matchable matchable : candidates) {
-                waitingGroup.remove(matchable);
+            if(waitingGroup.isEmpty()) {
+                pushEvent(new IdleEvent(this));
             }
-            notifyMatcher(candidates);
         }
         return candidates.size();
     }
