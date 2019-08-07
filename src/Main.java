@@ -1,7 +1,8 @@
 import com.franco.domain.MatchPlayer;
 import com.franco.domain.Matcher;
 import com.franco.group.TianTiMatchGroup;
-import com.franco.listener.AddMatchLIstener;
+import com.franco.listener.AddMatchListener;
+import com.franco.listener.IdleMatchListener;
 import com.franco.strategy.PairMatchStrategy;
 
 import java.util.ArrayList;
@@ -20,11 +21,13 @@ public class Main {
             public boolean match(MatchPlayer o1, MatchPlayer o2) {
                 return Math.abs(o1.getWin() - o2.getWin()) <= 3;
             }
-        }, new PairMatchStrategy()).addListener(new AddMatchLIstener());
+        }, new PairMatchStrategy())
+                .addListener(new AddMatchListener())
+                .addListener(new IdleMatchListener());
 
         final Random random = new Random();
 
-        Thread[] threads = new Thread[5];
+        Thread[] threads = new Thread[16];
         for(int i = 0 ; i < threads.length; i++) {
             threads[i] = new Thread(new Runnable() {
 
@@ -33,6 +36,11 @@ public class Main {
                     for(int i = 1; i <= 1000; i++) {
                         MatchPlayer matchPlayer = new MatchPlayer(count.getAndIncrement(), random.nextInt(8));
                         tianTiMatchGroup.add(matchPlayer);
+                        try {
+                            Thread.currentThread().sleep(25);
+                        } catch (InterruptedException e) {
+
+                        }
                     }
                 }
             });
